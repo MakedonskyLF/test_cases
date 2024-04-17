@@ -4,16 +4,21 @@
     - [ ] installing
     - [ ] usage
   - [ ] structure
-- [ ] dataclass для пакета
+- [x] dataclass для пакета
 - [ ] API connector
 - [ ] CLI
   - [ ] Errors
 - [ ] JSON
-  - [ ] response examples
+  - [х] response examples
   - [ ] CLI output example
   - [ ] 
 
 ## TODO
+
+# Ask
+- [ ] Версия интерпритатора
+- [ ] OpenAPI спецификация
+- [ ] В возвращаемой структуре возвращать только имена пакетов или со всеми аттрибутами
 
 # to think
 Использовать SQLite in memory для запросов по SQL
