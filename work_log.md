@@ -1,8 +1,8 @@
 # Tasks
 - [x] git repository
-  - [ ] readme.md
-    - [ ] installing
-    - [ ] usage
+  - [x] readme.md
+    - [x] installing
+    - [x] usage
   - [x] structure
 - [x] dataclass для пакета
 - [x] API connector
@@ -13,7 +13,6 @@
     - [x] small examples
   - [x] CLI output example
     - [x] small example
-  - [ ] 
 
 ## TODO
 
