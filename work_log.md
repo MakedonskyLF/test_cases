@@ -6,9 +6,9 @@
   - [x] structure
 - [x] dataclass для пакета
 - [x] API connector
-- [ ] CLI
-  - [ ] Errors
-- [ ] JSON
+- [x] CLI
+  - [x] Errors
+- [x] JSON
   - [x] response examples
     - [x] small examples
   - [x] CLI output example

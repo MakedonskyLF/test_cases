@@ -35,7 +35,9 @@ def generate(
 
     only_b1_name = f'only_{fname1.rsplit("/", 1)[-1].split(".")[0]}'
     only_b2_name = f'only_{fname2.rsplit("/", 1)[-1].split(".")[0]}'
-    res = defaultdict(lambda: {only_b1_name: [], only_b2_name: [], "newer": []})
+    res: typing.Dict[str, typing.Dict[str, list[Package]]] = defaultdict(
+        lambda: {only_b1_name: [], only_b2_name: [], "newer": []}
+    )
     branch1 = API_connector.load_package_data(fname1)
     branch2 = API_connector.load_package_data(fname2)
     for key, val in branch1.items():
@@ -67,9 +69,4 @@ def to_json(diff_dict: typing.Dict[str, typing.Dict[str, list[Package]]]) -> str
                 return dataclasses.asdict(val)
             return super().default(val)
 
-    json.dump(diff_dict, open("res_small.json", "w"), cls=DataclassJSONEncoder)
     return json.dumps(diff_dict, cls=DataclassJSONEncoder)
-
-
-to_json(generate("./examples/sisyphus_small.json", "./examples/p10_small.json"))
-# print(generate())
