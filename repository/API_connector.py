@@ -3,7 +3,6 @@ import typing
 
 import requests
 
-
 from .package import Package
 
 __API_url__ = "https://rdb.altlinux.org/api/export/branch_binary_packages/{branch}"
@@ -65,6 +64,6 @@ def load_package_data(fname: str) -> typing.Dict[tuple[str, str], Package]:
     packages = json.load(open(fname, "r"))
     branch = fname.rsplit("/", 1)[-1].split(".")[0]
     return {
-        (package["name"], package["arch"]): Package(branch=branch, **package)
+        (package["name"], package["arch"]): Package(**package)
         for package in packages["packages"]
     }

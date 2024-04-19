@@ -1,3 +1,5 @@
+import dataclasses
+import json
 import typing
 from collections import defaultdict
 
@@ -17,29 +19,57 @@ def is_newer(val1: tuple[str, str], val2: tuple[str, str]) -> bool:
     return val1 > val2
 
 
-def generate() -> typing.Dict[str, typing.Dict[str, list[Package]]]:
+def generate(
+    fname1: str, fname2: str
+) -> typing.Dict[str, typing.Dict[str, list[Package]]]:
     """Compare differences between p10 and sisyphus and organize it
+
+    Args:
+        fname1 (str): file with information about branch 1
+        fname2 (str): file with information about branch 2
 
     Returns:
         typing.Dict[str, typing.Dict[str, list[Package]]]: for each arch contain three lists
-        (only in p10, only in sisyphus, in sisyphus newer than in p10)
+        (only in branch 1, only in branch 2, in branch 1 newer than in branch 2)
     """
-    res = defaultdict(lambda: {"only_p10": [], "only_sisyphus": [], "newer": []})
-    sisyphus = API_connector.load_package_data("sisyphus.json")
-    p10 = API_connector.load_package_data("p10.json")
-    for key, val in sisyphus.items():
+
+    only_b1_name = f'only_{fname1.rsplit("/", 1)[-1].split(".")[0]}'
+    only_b2_name = f'only_{fname2.rsplit("/", 1)[-1].split(".")[0]}'
+    res = defaultdict(lambda: {only_b1_name: [], only_b2_name: [], "newer": []})
+    branch1 = API_connector.load_package_data(fname1)
+    branch2 = API_connector.load_package_data(fname2)
+    for key, val in branch1.items():
         arch = res[val.arch]
-        p10_val = p10.pop(key, None)
+        p10_val = branch2.pop(key, None)
         if p10_val:
             if is_newer((val.version, val.release), (p10_val.version, p10_val.release)):
                 arch["newer"].append(val)
-                print((val.version, val.release), (p10_val.version, p10_val.release))
         else:
-            arch["only_sisyphus"].append(val)
-    for val in p10.values():
-        res[val.arch]["only_p10"].append(val)
+            arch[only_b1_name].append(val)
+    for val in branch2.values():
+        res[val.arch][only_b2_name].append(val)
     return res
 
 
-generate()
+def to_json(diff_dict: typing.Dict[str, typing.Dict[str, list[Package]]]) -> str:
+    """Convert dict with dataclasses to json
+
+    Args:
+        diff_dict (typing.Dict[str, typing.Dict[str, list[Package]]]): differences between branches
+
+    Returns:
+        str: json serialized string
+    """
+
+    class DataclassJSONEncoder(json.JSONEncoder):
+        def default(self, val):
+            if dataclasses.is_dataclass(val):
+                return dataclasses.asdict(val)
+            return super().default(val)
+
+    json.dump(diff_dict, open("res_small.json", "w"), cls=DataclassJSONEncoder)
+    return json.dumps(diff_dict, cls=DataclassJSONEncoder)
+
+
+to_json(generate("./examples/sisyphus_small.json", "./examples/p10_small.json"))
 # print(generate())

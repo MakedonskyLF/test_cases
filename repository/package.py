@@ -5,7 +5,6 @@ from dataclasses import dataclass
 class Package:
     """class for representing one package"""
 
-    branch: str
     name: str
     epoch: int
     version: str

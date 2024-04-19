@@ -3,14 +3,16 @@
   - [ ] readme.md
     - [ ] installing
     - [ ] usage
-  - [ ] structure
+  - [x] structure
 - [x] dataclass для пакета
 - [x] API connector
 - [ ] CLI
   - [ ] Errors
 - [ ] JSON
-  - [х] response examples
-  - [ ] CLI output example
+  - [x] response examples
+    - [x] small examples
+  - [x] CLI output example
+    - [x] small example
   - [ ] 
 
 ## TODO
