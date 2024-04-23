@@ -9,7 +9,7 @@ from requests import HTTPError
 
 from worker import *
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 
 def get_branches_data() -> None:
