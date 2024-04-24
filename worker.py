@@ -3,11 +3,13 @@ import json
 import typing
 from collections import defaultdict
 
+from rpm_vercmp import vercmp
+
 from repository import API_connector, Package
 
 
 def is_newer(val1: tuple[str, str], val2: tuple[str, str]) -> bool:
-    """Try convert numbers to int and compare values in case of fail compare lexicographic
+    """Compare versions of packages according RPM Package Manager a version comparison algorithm
 
     Args:
         val1 (tuple[str, str]): Version, release of first package
@@ -17,34 +19,10 @@ def is_newer(val1: tuple[str, str], val2: tuple[str, str]) -> bool:
         bool: is first newer than second
     """
 
-    def __str_numtoint(s: str) -> list[str | int]:
-        """Convert string to list of characters but number converted to int
-
-        Args:
-            s (str): string with digits. Example '1.3.10 alt4'
-
-        Returns:
-            list[str | int]: list of characters but number converted to int. For example arg [1, 3, 10, ' ', 'a', 'l', 't', 4]
-        """
-        res = []
-        buffer = []
-        for char in s:
-            if char.isdigit():
-                buffer.append(char)
-            else:
-                if buffer:
-                    res.append(int("".join(buffer)))
-                res.append(char)
-        if buffer:
-            res.append(int("".join(buffer)))
-        return res
-
-    try:
-        res = __str_numtoint(" ".join(val1)) > __str_numtoint(" ".join(val2))
-    except:
-        res = val1 > val2
-
-    return res
+    if val1[0] == val2[0]:
+        return vercmp(val1[1], val2[1]) == 1
+    else:
+        return vercmp(val1[0], val2[0]) == 1
 
 
 def generate(

@@ -50,6 +50,8 @@ In case of error print error type and description. Set exit code to 1.
 - python3 3.9
 - requests
   - can be installed by pip: `pip install requests`
+- rpm-vercmp
+  - can be installed by pip: `pip install rpm-vercmp`
 
 ### Install
 #### Downloading
