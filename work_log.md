@@ -15,7 +15,13 @@
     - [x] small example
 
 ## TODO
-
+- [ ] All API work in one module
+- [ ] Program as package
+- [ ] refactor
+  - [ ] organize functions
+  - [ ] variable naming
+  - [ ] API URL, branches names... to config files
+  
 # Ask
 - [x] Версия интерпритатора
   - 3.9.16
