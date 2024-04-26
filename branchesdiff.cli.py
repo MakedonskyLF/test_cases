@@ -3,18 +3,20 @@
 
 import argparse
 import sys
-from tempfile import gettempdir
 
 from requests import HTTPError
 
-from worker import *
+import settings as cnf
+from branchesdiff import *
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 
 def get_branches_data() -> None:
+    pass
     try:
-        files = API_connector.download_packages_data(folder=gettempdir())
+        pass
+        # files = API_connector.download_packages_data(folder=gettempdir())
     except HTTPError as e:
         sys.exit(f"API error. {e}")
     except OSError as e:
@@ -25,11 +27,7 @@ def get_branches_data() -> None:
 
 def generate_json():
     try:
-        print(
-            to_json(
-                generate(f"{gettempdir()}/sisyphus.json", f"{gettempdir()}/p10.json")
-            )
-        )
+        print(to_json(generate(cnf.DEV_BRANCH, cnf.STABLE_BRANCH)))
     except OSError as e:
         sys.exit(f"File error. {e}")
     sys.exit(0)
