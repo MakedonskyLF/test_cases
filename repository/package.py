@@ -6,7 +6,7 @@ from rpm_vercmp import vercmp
 
 @dataclass
 class Package:
-    """class for representing package"""
+    """Class for representing package"""
 
     name: str
     epoch: int

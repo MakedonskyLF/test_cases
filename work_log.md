@@ -15,12 +15,12 @@
     - [x] small example
 
 ## TODO
-- [ ] All API work in one module
+- [x] All API work in one module
 - [ ] Program as package
-- [ ] refactor
-  - [ ] organize functions
-  - [ ] variable naming
-  - [ ] API URL, branches names... to config files
+- [x] refactor
+  - [x] organize functions
+  - [x] variable naming
+  - [x] API URL, branches names... to config files
   
 # Ask
 - [x] Версия интерпритатора

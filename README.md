@@ -22,19 +22,18 @@ Downloaded branch data stored in system temp folder
 branchesdiff.cli with no commands show help information:
 
 ```bash
-usage: branchesdiff.cli [-h] {update,generate} ...
+usage: branchesdiff.cli.py [-h] [-f FILE] [-v] [--dev DEV] [--stable STABLE]
 
-Print differences between branches sisyphus and p10 in json format
-
-positional arguments:
-  {update,generate}
-    update           Update packages metadata
-    generate         Generate json with differences between branches
+Report differences between development branch and stable branch in json format
 
 options:
-  -h, --help         show this help message and exit
+  -h, --help            show this help message and exit
+  -f FILE, --file FILE  output to file FILE
+  -v, --verbose         print work log
+  --dev DEV             development branch name
+  --stable STABLE       stable branch name
 
-Version 1.0.0
+Version 2.0.1
 ```
 commands description
 * update 

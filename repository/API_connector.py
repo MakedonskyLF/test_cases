@@ -16,7 +16,7 @@ class API_connector:
             branch (str): branch name
 
         Returns:
-            typing.Dict[typing.Any, Package]: Packages collection with Package id as a key
+            typing.Dict[typing.Any, Package]: Packages dict with Package id as a key
         """
         res = {}
         with requests.get(f"{self._API_url}{branch}", stream=True) as r:

@@ -2,59 +2,65 @@
 # to make executable: chmod +x branchesdiff.cli.py
 
 import argparse
+import os
 import sys
 
-from requests import HTTPError
-
-import settings as cnf
 from branchesdiff import *
 
-__version__ = "1.2.0"
+__version__ = "2.0.1"
 
 
-def get_branches_data() -> None:
-    pass
-    try:
-        pass
-        # files = API_connector.download_packages_data(folder=gettempdir())
-    except HTTPError as e:
-        sys.exit(f"API error. {e}")
-    except OSError as e:
-        sys.exit(f"File error. {e}")
-    print("Update complete")
-    sys.exit(0)
+class HiddenPrints:
+    """Help class for with statement to abort printing"""
 
+    def __init__(self, verbose: bool = False) -> None:
+        self._verbose = verbose
 
-def generate_json():
-    try:
-        print(to_json(generate(cnf.DEV_BRANCH, cnf.STABLE_BRANCH)))
-    except OSError as e:
-        sys.exit(f"File error. {e}")
-    sys.exit(0)
+    def __enter__(self):
+        if not self._verbose:
+            self._original_stdout = sys.stdout
+            sys.stdout = open(os.devnull, "w")
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if not self._verbose:
+            sys.stdout.close()
+            sys.stdout = self._original_stdout
 
 
 def main(args):
     parser = argparse.ArgumentParser(
-        description="Print differences between branches sisyphus and p10 in json format",
+        description="Report differences between development branch and stable branch in json format",
         epilog=f"Version {__version__}",
     )
-    subparsers = parser.add_subparsers()
 
-    parser_update = subparsers.add_parser("update", help="Update packages metadata")
-    parser_update.set_defaults(func=get_branches_data)
-
-    parser_generate = subparsers.add_parser(
-        "generate", help="Generate json with differences between branches"
+    parser.add_argument("-f", "--file", type=str, help="output to file FILE")
+    parser.add_argument("-v", "--verbose", action="store_true", help="print work log")
+    parser.add_argument(
+        "--dev", type=str, default=cnf.DEV_BRANCH, help="development branch name"
     )
-    parser_generate.set_defaults(func=generate_json)
+    parser.add_argument(
+        "--stable", type=str, default=cnf.STABLE_BRANCH, help="stable branch name"
+    )
 
     if len(args) == 0:
         parser.print_help()
         sys.exit(1)
 
     args = parser.parse_args(args)
-    args.func()
+
+    with HiddenPrints(args.verbose):
+        diff = compare(args.dev, args.stable)
+
+    if args.file:
+        diff.tofile(args.file)
+    else:
+        print(diff)
+
+    sys.exit(0)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    try:
+        main(sys.argv[1:])
+    except Exception as e:
+        sys.exit(str(e))
