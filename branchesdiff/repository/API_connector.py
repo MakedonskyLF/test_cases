@@ -2,7 +2,7 @@ import typing
 
 import requests
 
-from repository.package import Package
+from .package import Package
 
 
 class API_connector:

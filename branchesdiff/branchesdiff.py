@@ -2,10 +2,7 @@ import dataclasses
 import json
 from collections import defaultdict
 
-import settings as cnf
-from repository import API_connector
-
-api_connector = API_connector(cnf.API_URL)
+from .repository import API_connector
 
 
 class BranchesDiffDict(defaultdict):
@@ -24,10 +21,13 @@ class BranchesDiffDict(defaultdict):
         json.dump(self, open(fname, "w"), cls=self.DataclassJSONEncoder)
 
 
-def compare(dev_branch_name: str, stable_branch_name: str) -> BranchesDiffDict:
+def compare(
+    apiurl: str, dev_branch_name: str, stable_branch_name: str
+) -> BranchesDiffDict:
     """Compare differences between development and stable branches and return it as BranchesDiffDict object
 
     Args:
+        apiurl (str): Address for branches API
         dev_branch_name (str): name of development branch
         stable_branch_name (str): name of stable branch
 
@@ -46,6 +46,7 @@ def compare(dev_branch_name: str, stable_branch_name: str) -> BranchesDiffDict:
         }  # default value if missing key
     )
 
+    api_connector = API_connector(apiurl)
     print(f"requesting branch: {dev_branch_name}")
     dev_branch = api_connector.get_packages(dev_branch_name)
     print("Complete.")

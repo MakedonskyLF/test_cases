@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "branchesdiff"
+version = "2.0.3"
+description = "Software for check differences in branches (test task)"
+authors = ["MakedonskyLF <Polyakov.main@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+repository = "https://github.com/MakedonskyLF/test_cases"
+
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "^2.31.0"
+rpm-vercmp = "^0.1.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

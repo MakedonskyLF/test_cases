@@ -4,10 +4,11 @@
 import argparse
 import os
 import sys
+from configparser import ConfigParser
 
 from branchesdiff import *
 
-__version__ = "2.0.1"
+__version__ = "2.0.3"
 
 
 class HiddenPrints:
@@ -28,6 +29,11 @@ class HiddenPrints:
 
 
 def main(args):
+    config = ConfigParser()
+    config["branchesdiff"] = {"API_URL": "", "DEV_BRANCH": "", "STABLE_BRANCH": ""}
+    config.read("config.ini")
+    cfg = config["branchesdiff"]
+
     parser = argparse.ArgumentParser(
         description="Report differences between development branch and stable branch in json format",
         epilog=f"Version {__version__}",
@@ -35,21 +41,40 @@ def main(args):
 
     parser.add_argument("-f", "--file", type=str, help="output to file FILE")
     parser.add_argument("-v", "--verbose", action="store_true", help="print work log")
-    parser.add_argument(
-        "--dev", type=str, default=cnf.DEV_BRANCH, help="development branch name"
-    )
-    parser.add_argument(
-        "--stable", type=str, default=cnf.STABLE_BRANCH, help="stable branch name"
-    )
+    if cfg["DEV_BRANCH"]:
+        parser.add_argument(
+            "--dev", type=str, default=cfg["DEV_BRANCH"], help="development branch name"
+        )
+    else:
+        parser.add_argument(
+            "--dev", type=str, required=True, help="development branch name"
+        )
 
-    if len(args) == 0:
-        parser.print_help()
-        sys.exit(1)
+    if cfg["STABLE_BRANCH"]:
+        parser.add_argument(
+            "--stable",
+            type=str,
+            default=cfg["STABLE_BRANCH"],
+            help="stable branch name",
+        )
+    else:
+        parser.add_argument(
+            "--stable", type=str, required=True, help="stable branch name"
+        )
+
+    if cfg["API_URL"]:
+        parser.add_argument(
+            "--api", type=str, default=cfg["API_URL"], help="URL for API requests"
+        )
+    else:
+        parser.add_argument(
+            "--api", type=str, required=True, help="URL for API requests"
+        )
 
     args = parser.parse_args(args)
 
     with HiddenPrints(args.verbose):
-        diff = compare(args.dev, args.stable)
+        diff = compare(args.api, args.dev, args.stable)
 
     if args.file:
         diff.tofile(args.file)
