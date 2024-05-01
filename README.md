@@ -19,10 +19,10 @@ Software for check differences in branches sisyphus and p10:
 Downloaded branch data stored in system temp folder
 
 ## Usage
-branchesdiff.cli with no commands show help information:
+`branchesdiff.cli -h` show help information:
 
 ```bash
-usage: branchesdiff.cli.py [-h] [-f FILE] [-v] [--dev DEV] [--stable STABLE]
+usage: branchesdiff.cli.py [-h] [-f FILE] [-v] [--dev DEV] [--stable STABLE] [--api API]
 
 Report differences between development branch and stable branch in json format
 
@@ -32,15 +32,20 @@ options:
   -v, --verbose         print work log
   --dev DEV             development branch name
   --stable STABLE       stable branch name
+  --api API             URL for API requests
 
-Version 2.0.1
+Version 2.0.3
 ```
-commands description
-* update 
-  * download branches data and save it in os temp folder. File names are `p10.json` and `sisyphus.json`. If success prints `Update complete`.
-* generate
-  * Generates and prints to standard output json with differences information.
-  
+
+Development branch name, stable branch name and URL for API requests can be specified in config file `config.ini`.
+For example `config.ini` can be:
+```ini
+[branchesdiff]
+API_URL = https://rdb.altlinux.org/api/export/branch_binary_packages/
+DEV_BRANCH = sisyphus
+STABLE_BRANCH = p10
+```
+
 In case of error print error type and description. Set exit code to 1.
 
 ## Installation
@@ -54,9 +59,8 @@ In case of error print error type and description. Set exit code to 1.
 
 ### Install
 #### Downloading
-* using git: `git clone https://github.com/MakedonskyLF/test_cases.git`
-* just download [zip archive](https://github.com/MakedonskyLF/test_cases/archive/refs/heads/main.zip)
-  * unzip downloaded archive
+1. Download cli file: [branchesdiff.cli.py](https://github.com/MakedonskyLF/test_cases/raw/main/branchesdiff.cli.py)
+2. Install dependencies: `python3 -m pip install --index-url https://test.pypi.org/simple/ branchesdiff`
 
 #### Integrating with bash
 You can put symlink for `branchesdiff.cli.py` in any folder from PATH variable.
