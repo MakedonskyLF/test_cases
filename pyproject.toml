@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "branchesdiff"
-version = "2.0.3"
+version = "2.0.4"
 description = "Software for check differences in branches (test task)"
 authors = ["MakedonskyLF <Polyakov.main@gmail.com>"]
 license = "MIT"

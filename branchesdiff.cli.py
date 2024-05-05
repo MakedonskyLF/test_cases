@@ -4,11 +4,13 @@
 import argparse
 import os
 import sys
-from configparser import ConfigParser
+from configparser import ConfigParser, SectionProxy
 
 from branchesdiff import *
 
-__version__ = "2.0.3"
+__version__ = "2.0.4"
+
+__CONFIG_FILE_NAME__ = "config.ini"
 
 
 class HiddenPrints:
@@ -28,48 +30,87 @@ class HiddenPrints:
             sys.stdout = self._original_stdout
 
 
-def main(args):
+def load_config(config_file_name: str) -> SectionProxy:
+    """Loads configuration parameters for program branchesdiff.cli
+
+    Args:
+        config_file_name (str): name of config file
+
+    Returns:
+        SectionProxy: dictionary like object with parameters for branchesdiff.cli
+    """
     config = ConfigParser()
     config["branchesdiff"] = {"API_URL": "", "DEV_BRANCH": "", "STABLE_BRANCH": ""}
-    config.read("config.ini")
-    cfg = config["branchesdiff"]
+    config.read(config_file_name)
+    return config["branchesdiff"]
 
+
+def set_file_arg_for_parser(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("-f", "--file", type=str, help="output to file FILE")
+
+
+def set_verbose_arg_for_parser(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("-v", "--verbose", action="store_true", help="print work log")
+
+
+def set_dev_arg_for_parser(parser: argparse.ArgumentParser, default: str) -> None:
+    parser.add_argument(
+        "--dev",
+        help="development branch name",
+        required=not bool(default),
+        type=str,
+        default=default,
+    )
+
+
+def set_stable_arg_for_parser(parser: argparse.ArgumentParser, default: str) -> None:
+    parser.add_argument(
+        "--stable",
+        help="stable branch name",
+        required=not bool(default),
+        type=str,
+        default=default,
+    )
+
+
+def set_api_arg_for_parser(parser: argparse.ArgumentParser, default: str) -> None:
+    parser.add_argument(
+        "--api",
+        help="URL for API requests",
+        type=str,
+        default=default,
+        required=not bool(default),
+    )
+
+
+def set_arguments_for_parser(parser: argparse.ArgumentParser, args: list[str]) -> None:
+    """Sets up listed arguments for parser according it defaults
+
+    Args:
+        parser (argparse.ArgumentParser): parser for setup
+        args (list[str]): list of arguments for setting up
+    """
+    cfg = load_config(__CONFIG_FILE_NAME__)
+
+    if "file" in args:
+        set_file_arg_for_parser(parser)
+    if "verbose" in args:
+        set_verbose_arg_for_parser(parser)
+    if "dev" in args:
+        set_dev_arg_for_parser(parser, cfg["DEV_BRANCH"])
+    if "stable" in args:
+        set_stable_arg_for_parser(parser, cfg["STABLE_BRANCH"])
+    if "api" in args:
+        set_api_arg_for_parser(parser, cfg["API_URL"])
+
+
+def main(args):
     parser = argparse.ArgumentParser(
         description="Report differences between development branch and stable branch in json format",
         epilog=f"Version {__version__}",
     )
 
-    parser.add_argument("-f", "--file", type=str, help="output to file FILE")
-    parser.add_argument("-v", "--verbose", action="store_true", help="print work log")
-    if cfg["DEV_BRANCH"]:
-        parser.add_argument(
-            "--dev", type=str, default=cfg["DEV_BRANCH"], help="development branch name"
-        )
-    else:
-        parser.add_argument(
-            "--dev", type=str, required=True, help="development branch name"
-        )
-
-    if cfg["STABLE_BRANCH"]:
-        parser.add_argument(
-            "--stable",
-            type=str,
-            default=cfg["STABLE_BRANCH"],
-            help="stable branch name",
-        )
-    else:
-        parser.add_argument(
-            "--stable", type=str, required=True, help="stable branch name"
-        )
-
-    if cfg["API_URL"]:
-        parser.add_argument(
-            "--api", type=str, default=cfg["API_URL"], help="URL for API requests"
-        )
-    else:
-        parser.add_argument(
-            "--api", type=str, required=True, help="URL for API requests"
-        )
+    set_arguments_for_parser(parser, ["file", "verbose", "dev", "stable", "api"])
 
     args = parser.parse_args(args)
 
@@ -81,11 +122,11 @@ def main(args):
     else:
         print(diff)
 
-    sys.exit(0)
-
 
 if __name__ == "__main__":
     try:
         main(sys.argv[1:])
     except Exception as e:
         sys.exit(str(e))
+    else:
+        sys.exit(0)
